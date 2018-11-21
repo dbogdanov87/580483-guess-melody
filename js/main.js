@@ -1,5 +1,8 @@
 'use strict';
 
+const LEFT_ARROW = 37;
+const RIGHR_ARROW = 39;
+
 const screenNumbers = {
   welcome: 0,
 };
@@ -23,3 +26,13 @@ const selectScreen = (index) => {
 
 selectScreen(screenNumbers.welcome);
 
+document.addEventListener(`keydown`, (evt) => {
+  switch (evt.keyCode) {
+    case LEFT_ARROW:
+      selectScreen(currentScreen - 1);
+      break;
+    case RIGHR_ARROW:
+      selectScreen(currentScreen + 1);
+      break;
+  }
+});
