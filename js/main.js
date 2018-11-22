@@ -1,7 +1,7 @@
 'use strict';
 
 const LEFT_ARROW = 37;
-const RIGHR_ARROW = 39;
+const RIGHT_ARROW = 39;
 
 const screenNumbers = {
   welcome: 0,
@@ -31,7 +31,39 @@ document.addEventListener(`keydown`, (evt) => {
     case LEFT_ARROW:
       selectScreen(currentScreen - 1);
       break;
-    case RIGHR_ARROW:
+    case RIGHT_ARROW:
+      selectScreen(currentScreen + 1);
+      break;
+  }
+});
+
+const divArrowButton = document.createElement(`div`);
+divArrowButton.innerHTML = `<div class="arrows__wrap">
+                                <style>
+                                  .arrows__wrap {
+                                    position: absolute;
+                                    top: 135px;
+                                    left: 50%;
+                                    margin-left: -56px;
+                                  }
+                                  .arrows__btn {
+                                    background: none;
+                                    border: 2px solid black;
+                                    padding: 5px 20px;
+                                  }
+                                </style>
+                                <button class="arrows__btn"><-</button>
+                                <button class="arrows__btn">-></button>
+                            </div>`;
+
+mainElement.parentNode.insertBefore(divArrowButton, mainElement.nextSibling);
+
+document.querySelector(`.arrows__wrap`).addEventListener(`click`, (evt) => {
+  switch (evt.target.innerText) {
+    case `->`:
+      selectScreen(currentScreen - 1);
+      break;
+    case `<-`:
       selectScreen(currentScreen + 1);
       break;
   }
