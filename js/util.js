@@ -1,14 +1,17 @@
-export const renderScreen (template) => {
-  const wrapper = document.querySelector(`div`);
-  wrapper.innerHTML = template.trim();
-  return wrapper;
+const mainElement = document.querySelector(`section.main`);
+
+export const getRandom = (array) => {
+  return array[Math.floor(Math.random() * array.length)];
 };
 
-const mainElement = document.querySelector(`.app`);
-
-export const changeScreen (element) => {
+export const changeScreen = (element) => {
   mainElement.innerHTML = ``;
   mainElement.appendChild(element);
 };
 
+export const renderScreen = (template) => {
+  const wrapper = document.createElement(`div`);
+  wrapper.innerHTML = template.trim();
+  return wrapper;
+};
 
