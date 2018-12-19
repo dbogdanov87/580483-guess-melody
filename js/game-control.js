@@ -45,13 +45,9 @@ export const changeTime = (game, time) => {
 };
 
 export const changeQuestionScreen = (state) => {
-  if (state.attempts) {
-    if (state.level < state.maxLevel) {
-      const nextState = changeLevel(state, state.level + 1);
-      changeScreen(gameTemplate(nextState));
-    } else {
-      changeScreen(resultTemplate(state));
-    }
+  if (state.attempts && state.level < state.maxLevel) {
+    const nextState = changeLevel(state, state.level + 1);
+    changeScreen(gameTemplate(nextState));
   } else {
     changeScreen(resultTemplate(state));
   }
