@@ -1,4 +1,4 @@
-const MAX_COUNT_ANSWERS = 10;
+const MAX_COUNT_ANSWERS = 9;
 const TIME_FAST_ANSWER = 29;
 const GAME_OVER = -1;
 
@@ -13,18 +13,14 @@ const initScore = {
 };
 
 
-export const scoring = (userAnswers, quantityNotes) => {
+export const scoring = (userAnswers, attempts) => {
   let score = initScore.START;
 
   if (!Array.isArray(userAnswers)) {
     throw new Error(`Ответы пользователя должны быть массивом`);
   }
 
-  if ((typeof quantityNotes !== `number`)) {
-    throw new Error(`Количество но должно быть типом number`);
-  }
-
-  if (userAnswers.length < MAX_COUNT_ANSWERS || quantityNotes === 0) {
+  if (userAnswers.length < MAX_COUNT_ANSWERS || attempts === 0) {
     return GAME_OVER;
   }
 

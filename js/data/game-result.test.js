@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import {defeatMessages, gameResult} from '../game-result.js';
+import {getDefeatMessage, getGameResult} from '../game-result.js';
 
 const statistics = [4, 5, 8, 10, 11];
 
@@ -30,18 +30,18 @@ const testCase4 = {
 describe(`Проверка вывода результатов игры`, () => {
 
   it(`Победил в игре и занял 1 место`, () => {
-    assert.equal(`Вы заняли 1 место из 6 игроков. Это лучше, чем у 83% игроков`, gameResult(statistics, testCase1));
+    assert.equal(`Вы заняли 1 место из 6 игроков. Это лучше, чем у 83% игроков`, getGameResult(statistics, testCase1).text);
   });
 
   it(`Победил в игре и занял 4 место`, () => {
-    assert.equal(`Вы заняли 4 место из 6 игроков. Это лучше, чем у 33% игроков`, gameResult(statistics, testCase2));
+    assert.equal(`Вы заняли 4 место из 6 игроков. Это лучше, чем у 33% игроков`, getGameResult(statistics, testCase2).text);
   });
 
   it(`Проиграл в игре - закончились попытки`, () => {
-    assert.equal(defeatMessages.ATTEMPTS_IS_OVER, gameResult(statistics, testCase3));
+    assert.equal(getDefeatMessage(testCase3).text, getGameResult(statistics, testCase3).text);
   });
 
   it(`Проиграл в игре - закончилось время`, () => {
-    assert.equal(defeatMessages.TIME_IS_OVER, gameResult(statistics, testCase4));
+    assert.equal(getDefeatMessage(testCase4).text, getGameResult(statistics, testCase4).text);
   });
 });

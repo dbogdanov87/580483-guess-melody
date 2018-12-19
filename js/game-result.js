@@ -1,19 +1,25 @@
-export const defeatMessages = {
-  TIME_IS_OVER: `Время вышло! Вы не успели отгадать все мелодии`,
-  ATTEMPTS_IS_OVER: `У вас закончились все попытки. Ничего, повезёт в следующий раз!`
-};
-
-const getDefeatMessage = (results) => {
-  let message = ``;
+export const getDefeatMessage = (results) => {
+  const defeatByTimeMessages = {
+    title: `Увы и ах!`,
+    text: `Время вышло! Вы не успели отгадать все мелодии`
+  };
+  const defeatByAttemptsMessages = {
+    title: `Какая жалость!`,
+    text: `У вас закончились все попытки. Ничего, повезёт в следующий раз!`
+  };
+  let messages = {};
   if (results.time <= 0) {
-    message = defeatMessages.TIME_IS_OVER;
+    messages.title = defeatByTimeMessages.title;
+    messages.text = defeatByTimeMessages.text;
   } else if (results.attempts <= 0) {
-    message = defeatMessages.ATTEMPTS_IS_OVER;
+    messages.title = defeatByAttemptsMessages.title;
+    messages.text = defeatByAttemptsMessages.text;
   }
-  return message;
+  return messages;
 };
 
-export const getVictoryMessage = (playersResult, score) => {
+const getVictoryMessage = (playersResult, score) => {
+  const messages = {};
   const results = playersResult.slice();
   results.push(score);
   results.sort((a, b) => b - a);
@@ -21,11 +27,13 @@ export const getVictoryMessage = (playersResult, score) => {
   const place = results.indexOf(score) + 1;
   const allPlaces = results.length;
   const successRate = Math.round((allPlaces - place) / allPlaces * 100);
+  messages.title = `Вы настоящий меломан!`;
+  messages.text = `Вы заняли ${place} место из ${allPlaces} игроков. Это лучше, чем у ${successRate}% игроков`;
 
-  return `Вы заняли ${place} место из ${allPlaces} игроков. Это лучше, чем у ${successRate}% игроков`;
+  return messages;
 };
 
-export const gameResult = (playersResult, currentResult) => {
+export const getGameResult = (playersResult, currentResult) => {
   if (!Array.isArray(playersResult)) {
     throw new Error(`Результаты игроков должны быть массивом`);
   }
