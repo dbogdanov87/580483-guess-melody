@@ -1,8 +1,4 @@
-const mainElement = document.querySelector(`section.main`);
-
-export const getRandom = (array) => {
-  return array[Math.floor(Math.random() * array.length)];
-};
+export const mainElement = document.querySelector(`section.main`);
 
 export const changeScreen = (element) => {
   mainElement.innerHTML = ``;
