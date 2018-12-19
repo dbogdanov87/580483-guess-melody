@@ -1,4 +1,4 @@
-const getDefeatMessage = (results) => {
+export const getDefeatMessage = (results) => {
   const defeatByTimeMessages = {
     title: `Увы и ах!`,
     text: `Время вышло! Вы не успели отгадать все мелодии`

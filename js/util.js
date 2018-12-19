@@ -1,4 +1,4 @@
-export const mainElement = document.querySelector(`section.main`);
+const mainElement = document.querySelector(`section.main`);
 
 export const changeScreen = (element) => {
   mainElement.innerHTML = ``;
@@ -10,4 +10,3 @@ export const renderScreen = (template) => {
   wrapper.innerHTML = template.trim();
   return wrapper;
 };
-
