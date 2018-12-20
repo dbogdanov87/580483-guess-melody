@@ -1,9 +1,3 @@
-const render = (html) => {
-  const wrapper = document.createElement(`div`);
-  wrapper.innerHTML = html.trim();
-  return wrapper;
-};
-
 export default class AbstractView {
   constructor() {
     if (new.target === AbstractView) {
@@ -28,6 +22,8 @@ export default class AbstractView {
   }
 
   render() {
-    return render(this.template);
+    const wrapper = document.createElement(`div`);
+    wrapper.innerHTML = this.template.trim();
+    return wrapper;
   }
 }
