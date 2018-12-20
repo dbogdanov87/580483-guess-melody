@@ -1,6 +1,5 @@
 import {changeScreen} from './util.js';
-import gameTemplate from '../js/template/game.js';
-import resultTemplate from '../js/template/result.js';
+import {resultScreen, gameTypeScreen} from './screen/game-screen.js';
 
 export const changeLevel = (game, level) => {
   if (typeof level !== `number`) {
@@ -45,14 +44,10 @@ export const changeTime = (game, time) => {
 };
 
 export const changeQuestionScreen = (state) => {
-  if (state.attempts) {
-    if (state.level < state.maxLevel) {
-      const nextState = changeLevel(state, state.level + 1);
-      changeScreen(gameTemplate(nextState));
-    } else {
-      changeScreen(resultTemplate(state));
-    }
+  if (state.attempts && state.level < state.maxLevel) {
+    const nextState = changeLevel(state, state.level + 1);
+    changeScreen(gameTypeScreen(nextState).element);
   } else {
-    changeScreen(resultTemplate(state));
+    changeScreen(resultScreen(state).element);
   }
 };
