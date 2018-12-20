@@ -1,5 +1,5 @@
 import {changeScreen} from '../js/util.js';
 import {INITIAL_GAME} from '../js/game-data.js';
-import welcomeTemplate from '../js/template/welcome.js';
+import {welcomeScreen} from './screen/game-screen.js';
 
-changeScreen(welcomeTemplate(INITIAL_GAME));
+changeScreen(welcomeScreen(INITIAL_GAME).element);
