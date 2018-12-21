@@ -1,6 +1,5 @@
 import AbstractView from './abstract-view.js';
 import {getGameResult} from '../game-result.js';
-import {scoring} from '../game-scoring.js';
 
 const statistics = [3, 5, 7, 9, 13];
 
@@ -8,7 +7,6 @@ export default class ResultView extends AbstractView {
   constructor(result) {
     super();
     this.result = result;
-    this.result.score = scoring(this.result.userAnswers, this.result.attempts);
     this.resultData = getGameResult(statistics, result);
   }
 

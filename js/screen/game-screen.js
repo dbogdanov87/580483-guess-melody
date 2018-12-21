@@ -1,49 +1,114 @@
 import {changeScreen} from '../util.js';
-import {INITIAL_GAME, gameQuestions} from '../game-data.js';
-import WelcomeView from '../template/welcome-view.js';
-import GameTypeView from '../template/game-type-view.js';
-import {artistScreen} from '../screen/artist-screen.js';
-import {genreScreen} from '../screen/genre-screen.js';
-import GameHeaderView from '../template/header-view.js';
-import ResultView from '../template/result-view.js';
+import HeaderView from '../view/header-view.js';
+import GameTypeView from '../view/game-type-view.js';
+import ArtistView from '../view/artist-view.js';
+import GenreView from '../view/genre-view.js';
+import Application from '../application.js';
 
-export const welcomeScreen = () => {
-  const screen = new WelcomeView(INITIAL_GAME);
+export default class GameScreen {
+  constructor(model) {
+    this.model = model;
+    this.viewGameHeader = new HeaderView(this.model.state);
+    this.viewGameType = new GameTypeView(this.model.state.level);
+    this.viewGameQuestion = (this.model.isGameGenre()) ? new GenreView(this.model.state) : new ArtistView(this.model.state);
 
-  screen.onWelcomeButton = (state) => {
-    changeScreen(gameTypeScreen(state).element);
-  };
+    this.viewGameType.element.insertAdjacentElement(`afterbegin`, this.viewGameHeader.element);
+    this.viewGameType.element.querySelector(`.game__screen`).insertAdjacentElement(`beforeend`, this.viewGameQuestion.element);
 
-  return screen;
-};
+    this._timer = 0;
+  }
 
-export const gameHeader = (state) => {
-  const screen = new GameHeaderView(state);
+  get element() {
+    return this.viewGameType.element;
+  }
 
-  screen.onGameBackBtn = () => {
-    changeScreen(welcomeScreen(INITIAL_GAME).element);
-  };
-  return screen;
-};
+  stopTimer() {
+    clearInterval(this._timer);
+  }
 
-export const gameTypeScreen = (state) => {
-  const screen = new GameTypeView(state);
+  _tick() {
+    this.model.tick();
+    this.updateHeader();
+    this._timer = setTimeout(() => this._tick(), 1000);
+    this.timeIsOver();
+  }
 
-  const currentLevel = gameQuestions[state.level];
-  const content = (currentLevel.type === `game--genre`) ? genreScreen(state).element : artistScreen(state).element;
+  startGame() {
+    this._tick();
+    this.changeLevel();
+  }
 
-  screen.element.insertAdjacentElement(`afterbegin`, gameHeader(state).element);
-  screen.element.querySelector(`.game__screen`).insertAdjacentElement(`beforeend`, content);
+  updateHeader() {
+    const header = new HeaderView(this.model.state);
+    this.viewGameType.element.replaceChild(header.element, this.viewGameHeader.element);
+    this.viewGameHeader = header;
+    this.restart();
+  }
 
-  return screen;
-};
+  changeLevel() {
+    this.viewGameQuestion.onAnswer = () => {
+      this.compareAnswers();
+      if (this.model.state.level === this.model.state.maxLevel) {
+        this.stopTimer();
+        this.model.updateScore(this.model.state.userAnswers);
+        Application.showResult(this.model.state);
+      } else {
+        this.model.nextLevel();
+        const gameScreen = new GameScreen(this.model);
+        this.stopTimer();
+        gameScreen.startGame();
+        changeScreen(gameScreen.element);
+      }
+    };
+  }
 
-export const resultScreen = (state) => {
-  const screen = new ResultView(state);
+  timeIsOver() {
+    if (this.model.state.time === 0) {
+      Application.showResult(this.model.state);
+      this.stopTimer();
+    }
+  }
 
-  screen.onReplayButton = () => {
-    changeScreen(welcomeScreen(INITIAL_GAME).element);
-  };
+  getUserAnswerArtist() {
+    return this.viewGameQuestion.element.querySelector(`img`).src;
+  }
 
-  return screen;
-};
+
+  getUserAnswersGenre() {
+    const answersUser = [];
+    const answers = Array.from(this.viewGameType.element.querySelectorAll(`input:checked`));
+
+    answers.forEach((item) => {
+      const audioSrc = item.parentElement.parentElement.querySelector(`audio`).src;
+      answersUser.push(audioSrc);
+    });
+    return answersUser.join(`,`);
+  }
+
+  getGameAnswer() {
+    return this.model.isGameGenre() ? this.model.getGameAnswerGenre() : this.model.getGameAnswerArtist();
+  }
+
+  getUserAnswer() {
+    return this.model.isGameGenre() ? this.getUserAnswersGenre() : this.getUserAnswerArtist();
+  }
+
+  compareAnswers() {
+    const userAnswer = this.getUserAnswer();
+    const gameAnswer = this.getGameAnswer();
+    const answerUser = userAnswer === gameAnswer;
+    this.model.updateUserAnswers(answerUser, this.model.state.time);
+    if (!answerUser) {
+      this.model.lossAttempt();
+    }
+    if (this.model.state.attempts === 0) {
+      Application.showResult(this.model.state);
+      this.stopTimer();
+    }
+  }
+
+  restart() {
+    this.viewGameHeader.gameBackLink = () => Application.showWelcome();
+    this.stopTimer();
+  }
+}

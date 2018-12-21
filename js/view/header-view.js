@@ -1,9 +1,12 @@
 import AbstractView from './abstract-view.js';
+import {convertSeconds, convertMinutes} from '../util';
 
 export default class HeaderView extends AbstractView {
   constructor(state) {
     super();
     this.state = state;
+    this.second = convertSeconds(state.time);
+    this.minutes = convertMinutes(state.time);
   }
 
   get template() {
@@ -19,9 +22,9 @@ export default class HeaderView extends AbstractView {
     </svg>
     
     <div class="timer__value" xmlns="http://www.w3.org/1999/xhtml">
-      <span class="timer__mins">05</span>
+      <span class="timer__mins">${this.minutes}</span>
       <span class="timer__dots">:</span>
-      <span class="timer__secs">00</span>
+      <span class="timer__secs">${this.second}</span>
     </div>
     
     <div class="game__mistakes">

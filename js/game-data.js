@@ -3,7 +3,7 @@ import {melodies} from '../js/melodies.js';
 export const INITIAL_GAME = Object.freeze({
   level: 0,
   maxLevel: 9,
-  attempts: 3,
+  attempts: 10,
   score: 0,
   time: 300,
   userAnswers: []
