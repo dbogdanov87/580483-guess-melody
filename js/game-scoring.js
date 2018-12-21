@@ -1,6 +1,4 @@
-const MAX_COUNT_ANSWERS = 9;
 const TIME_FAST_ANSWER = 29;
-const GAME_OVER = -1;
 
 const answerPoints = {
   CORRECT: 1,
@@ -13,16 +11,8 @@ const initScore = {
 };
 
 
-export const scoring = (userAnswers, attempts) => {
+export const scoring = (userAnswers) => {
   let score = initScore.START;
-
-  if (!Array.isArray(userAnswers)) {
-    throw new Error(`Ответы пользователя должны быть массивом`);
-  }
-
-  if (userAnswers.length < MAX_COUNT_ANSWERS || attempts === 0) {
-    return GAME_OVER;
-  }
 
   userAnswers.forEach((item) => {
     if (!item.answer) {

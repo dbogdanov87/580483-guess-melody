@@ -1,6 +1,3 @@
-import {changeScreen} from './util.js';
-import {resultScreen, gameTypeScreen} from './screen/game-screen.js';
-
 export const changeLevel = (game, level) => {
   if (typeof level !== `number`) {
     throw new Error(`Уровень должен быть числом`);
@@ -43,11 +40,12 @@ export const changeTime = (game, time) => {
   });
 };
 
-export const changeQuestionScreen = (state) => {
-  if (state.attempts && state.level < state.maxLevel) {
-    const nextState = changeLevel(state, state.level + 1);
-    changeScreen(gameTypeScreen(nextState).element);
-  } else {
-    changeScreen(resultScreen(state).element);
+export const changeScore = (game, score) => {
+  if (typeof score !== `number`) {
+    throw new Error(`Очки пользователя должены быть числом`);
   }
+
+  return Object.assign({}, game, {
+    score
+  });
 };

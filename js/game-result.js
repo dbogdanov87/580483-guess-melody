@@ -42,5 +42,5 @@ export const getGameResult = (playersResult, currentResult) => {
     throw new Error(`Текущий результат должен быть объектом`);
   }
 
-  return (currentResult.score > 0 && currentResult.time > 0 && currentResult.attempts > 0) ? getVictoryMessage(playersResult, currentResult.score) : getDefeatMessage(currentResult);
+  return (currentResult.time > 0 && currentResult.attempts > 0) ? getVictoryMessage(playersResult, currentResult.score) : getDefeatMessage(currentResult);
 };

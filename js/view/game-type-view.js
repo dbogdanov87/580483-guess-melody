@@ -5,7 +5,7 @@ export default class GameTypeView extends AbstractView {
   constructor(state) {
     super();
     this.state = state;
-    this.level = gameQuestions[state.level];
+    this.level = gameQuestions[this.state];
   }
 
   get template() {
@@ -14,6 +14,5 @@ export default class GameTypeView extends AbstractView {
           <h2 class="game__title">${this.level.name}</h2>
         </section>
       </section>`;
-
   }
 }
