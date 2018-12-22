@@ -43,12 +43,15 @@ export default class Application {
       Loader.saveResults(this.result)
         .then(() => Loader.loadResults())
         .then((data) => (statisticsAllPlayers = data))
-        .then(() => this.showResult(statisticsAllPlayers, this.result))
+        .then(() => {
+          const resultScreen = new ResultScreen(statisticsAllPlayers, this.result);
+          changeScreen(resultScreen.element);
+        })
         .catch(Application.showError);
+    } else {
+      const resultScreen = new ResultScreen(statisticsAllPlayers, result);
+      changeScreen(resultScreen.element);
     }
-    console.log(statisticsAllPlayers);
-    const resultScreen = new ResultScreen(statisticsAllPlayers, result);
-    changeScreen(resultScreen.element);
   }
 
   static showError(error) {

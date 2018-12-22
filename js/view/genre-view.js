@@ -20,7 +20,7 @@ export default class GenreView extends AbstractView {
           <label class="game__check" for="answer-${item}">Отметить</label>
         </div>
       </div>`).join(``)}
-      <button class="game__submit button" type="submit">Ответить</button>
+      <button class="game__submit button " type="submit" disabled>Ответить</button>
     </form>`;
   }
 
@@ -28,6 +28,16 @@ export default class GenreView extends AbstractView {
     const gameTrackForm = this.element.querySelector(`.game__tracks`);
     gameTrackForm.addEventListener(`click`, () => {
       this.onCheckbox();
+    });
+
+    this.element.querySelectorAll(`.track`).forEach((item) => {
+      item.querySelector(`.track__button`).addEventListener(`click`, (evt) => {
+        const button = evt.target;
+        const audio = item.querySelector(`audio`);
+
+        evt.preventDefault();
+        this.onPlayPause(button, audio);
+      });
     });
 
     const gameSubmitButton = this.element.querySelector(`.game__submit`);
@@ -41,5 +51,8 @@ export default class GenreView extends AbstractView {
   }
 
   onCheckbox() {
+  }
+
+  onPlayPause() {
   }
 }

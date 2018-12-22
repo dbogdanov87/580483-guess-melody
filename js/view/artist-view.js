@@ -30,8 +30,19 @@ export default class ArtistView extends AbstractView {
         this.onAnswer(answer);
       });
     });
+
+    this.element.querySelector(`.track__button`).addEventListener(`click`, (evt) => {
+      const button = evt.target;
+      const audio = this.element.querySelector(`audio`);
+
+      evt.preventDefault();
+      this.onPlayPause(button, audio);
+    });
   }
 
   onAnswer() {
+  }
+
+  onPlayPause() {
   }
 }

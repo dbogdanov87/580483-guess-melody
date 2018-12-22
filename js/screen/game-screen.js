@@ -4,10 +4,12 @@ import GameTypeView from '../view/game-type-view.js';
 import ArtistView from '../view/artist-view.js';
 import GenreView from '../view/genre-view.js';
 import Application from '../application.js';
+import ModalConfirmView from '../view/modal-confirm-view.js';
 
 export default class GameScreen {
   constructor(model) {
     this.model = model;
+    this.viewModalConfirm = new ModalConfirmView();
     this.viewGameHeader = new HeaderView(this.model.currentDataQuestion);
     this.viewGameType = new GameTypeView(this.model.currentDataQuestion);
     this.viewGameQuestion = (this.model.isGameGenre()) ? new GenreView(this.model.currentDataQuestion) : new ArtistView(this.model.currentDataQuestion);
@@ -89,11 +91,54 @@ export default class GameScreen {
   }
 
   restart() {
-    this.viewGameHeader.gameBackLink = () => Application.showWelcome();
+    this.viewGameHeader.gameBackLink = () => {
+      this.viewModalConfirm.show();
+    };
     this.stopTimer();
   }
 
+  audioPleer(button, audio) {
+    if (button.classList.contains(`track__button--play`)) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+    button.classList.toggle(`track__button--play`);
+    button.classList.toggle(`track__button--pause`);
+  }
+
+  audioAdd(button, audio) {
+    this.audio = audio;
+    this.button = button;
+  }
+
+  audioDelete() {
+    delete this.audio;
+    delete this.button;
+  }
+
+  audioSwitch(button, audio) {
+    if (this.audio && this.audio === audio) {
+      this.audioPleer(this.button, this.audio);
+      this.audioDelete();
+    } else {
+      if (this.audio && this.audio !== audio) {
+        this.audioPleer(this.button, this.audio);
+        this.audioAdd(button, audio);
+        this.audioPleer(this.button, this.audio);
+      } else {
+        this.audioAdd(button, audio);
+        this.audioPleer(this.button, this.audio);
+      }
+    }
+  }
+
   bind() {
+
+    this.viewGameQuestion.onPlayPause = (button, audio) => {
+      this.audioSwitch(button, audio);
+    };
+
     this.viewGameQuestion.onAnswer = (element) => {
       this.stopTimer();
       this.compareAnswers(element);
@@ -105,6 +150,22 @@ export default class GameScreen {
       const gameScreen = new GameScreen(this.model);
       changeScreen(gameScreen.element);
       gameScreen.startGame();
+      this.audioDelete();
+    };
+
+    this.viewGameQuestion.onCheckbox = () => {
+      this.element.querySelector(`.game__submit`).disabled = this.getUserAnswersGenre().length <= 0;
+    };
+
+    this.viewModalConfirm.onCancel = () => {
+      this.startGame();
+      this.viewModalConfirm.element.remove();
+    };
+
+    this.viewModalConfirm.onConfirm = () => {
+      this.viewModalConfirm.element.remove();
+      this.stopTimer();
+      Application.showWelcome();
     };
   }
 }
