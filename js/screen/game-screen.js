@@ -17,6 +17,7 @@ export default class GameScreen {
 
     this._timer = 0;
     this.bind();
+    console.log(111);
   }
 
   get element() {
