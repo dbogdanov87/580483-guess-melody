@@ -1,27 +1,26 @@
 import AbstractView from './abstract-view.js';
-import {gameQuestions} from '../game-data.js';
+import {DEBUG, DEBUG_STYLE} from '../settings';
 
 export default class GenreView extends AbstractView {
-  constructor(state) {
+  constructor(data) {
     super();
-    this.state = state;
-    this.level = gameQuestions[state.level];
+    this.data = data;
   }
 
   get template() {
     return `<form class="game__tracks">
-      ${this.level.answers.map((answer, item) => `
+      ${this.data.answers.map((answer, item) => `
       <div class="track">
         <button class="track__button track__button--play" type="button"></button>
         <div class="track__status">
           <audio src="${answer.src}"></audio>
         </div>
-        <div class="game__answer">
+        <div class="game__answer" ${(DEBUG && answer.isCorrect) ? DEBUG_STYLE : ``}>
           <input class="game__input visually-hidden" type="checkbox" name="answer" value="${item}" id="answer-${item}">
           <label class="game__check" for="answer-${item}">Отметить</label>
         </div>
       </div>`).join(``)}
-      <button class="game__submit button" type="submit">Ответить</button>
+      <button class="game__submit button " type="submit" disabled>Ответить</button>
     </form>`;
   }
 
@@ -29,6 +28,16 @@ export default class GenreView extends AbstractView {
     const gameTrackForm = this.element.querySelector(`.game__tracks`);
     gameTrackForm.addEventListener(`click`, () => {
       this.onCheckbox();
+    });
+
+    this.element.querySelectorAll(`.track`).forEach((item) => {
+      item.querySelector(`.track__button`).addEventListener(`click`, (evt) => {
+        const button = evt.target;
+        const audio = item.querySelector(`audio`);
+
+        evt.preventDefault();
+        this.onPlayPause(button, audio);
+      });
     });
 
     const gameSubmitButton = this.element.querySelector(`.game__submit`);
@@ -42,5 +51,8 @@ export default class GenreView extends AbstractView {
   }
 
   onCheckbox() {
+  }
+
+  onPlayPause() {
   }
 }

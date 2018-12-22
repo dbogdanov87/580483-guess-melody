@@ -12,13 +12,10 @@ const answersMap = (genre, answers) => answers.map((answer) => {
 });
 
 export const adaptServerData = (data) => {
-  console.log(data);
   for (const level of data) {
     if (level.type === QuestionType.GENRE) {
       level.answers = answersMap(level.genre, level.answers);
     }
   }
-
-  console.log(data);
   return data;
 };

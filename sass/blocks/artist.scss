@@ -6,12 +6,9 @@
 
 .artist {
   position: relative;
-  width: 134px;
 
   color: $color-text-dark;
   text-align: center;
-
-  cursor: pointer;
 }
 
 .artist__picture {
@@ -27,12 +24,12 @@
   cursor: pointer;
 }
 
-.artist:hover .artist__picture,
+.artist__picture:hover,
 .artist__input:focus + .artist__name .artist__picture {
   border-color: $color-orange;
 }
 
-.artist:active .artist__picture {
+.artist__picture:active {
   border-color: $color-hover;
 }
 

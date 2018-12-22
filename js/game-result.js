@@ -20,13 +20,15 @@ export const getDefeatMessage = (results) => {
 
 const getVictoryMessage = (playersResult, score) => {
   const messages = {};
-  const results = playersResult.slice();
+  const scoreResults = playersResult.map((it) => it.score);
+  const results = scoreResults.slice();
   results.push(score);
-  results.sort((a, b) => b - a);
 
+  results.sort((a, b) => a - b);
   const place = results.indexOf(score) + 1;
   const allPlaces = results.length;
   const successRate = Math.round((allPlaces - place) / allPlaces * 100);
+
   messages.title = `Вы настоящий меломан!`;
   messages.text = `Вы заняли ${place} место из ${allPlaces} игроков. Это лучше, чем у ${successRate}% игроков`;
 

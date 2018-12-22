@@ -21,7 +21,7 @@ export default class HeaderView extends AbstractView {
               style="filter: url(#blur); transform: rotate(-90deg) scaleY(-1); transform-origin: center"/>
     </svg>
     
-    <div class="timer__value" xmlns="http://www.w3.org/1999/xhtml">
+    <div class="timer__value ${this.state.time <= 30 ? `timer__value--finished` : ``} xmlns="http://www.w3.org/1999/xhtml">
       <span class="timer__mins">${this.minutes}</span>
       <span class="timer__dots">:</span>
       <span class="timer__secs">${this.second}</span>

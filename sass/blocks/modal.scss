@@ -2,12 +2,12 @@
  * Стили для модальных окон
  */
 
-@import "../variables/colors";
-@import "../mixins/text";
-
 .modal {
+  position: absolute;
   z-index: 1;
-  top: 375px;
+  top: 50%;
+  left: 50%;
+  margin-left: -210px;
 
   padding: 50px 20px;
 
@@ -37,8 +37,8 @@
 
 .modal__close {
   position: absolute;
-  right: -30px;
-  top: -30px;
+  right: 30px;
+  top: 30px;
 
   padding: 0;
 

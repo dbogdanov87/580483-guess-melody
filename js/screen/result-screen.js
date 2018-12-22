@@ -2,9 +2,10 @@ import ResultView from '../view/result-view.js';
 import Application from '../application.js';
 
 export default class resultScreen {
-  constructor(result) {
+  constructor(statistics, result) {
+    this.statistics = statistics;
     this.result = result;
-    this.view = new ResultView(this.result);
+    this.view = new ResultView(this.statistics, this.result);
     this.bind();
   }
 
