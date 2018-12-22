@@ -1,24 +1,23 @@
 import AbstractView from './abstract-view.js';
-import {gameQuestions} from '../game-data.js';
+import {DEBUG, DEBUG_STYLE} from '../settings';
 
 export default class ArtistView extends AbstractView {
-  constructor(state) {
+  constructor(data) {
     super();
-    this.state = state;
-    this.level = gameQuestions[state.level];
+    this.data = data;
   }
 
   get template() {
     return `<div class="game__track">
     <button class="track__button track__button--play" type="button"></button>
-     <audio src="${this.level.melody.src}"></audio>
+     <audio src="${this.data.src}"></audio>
     </div>
     <form class="game__artist">
-      ${this.level.answers.map((answer, item) => `<div class="artist">
-        <input class="artist__input visually-hidden" type="radio" name="answer" value="artist-${item}" id="answer-${item}">
+      ${this.data.answers.map((answer, item) => `<div class="artist">
+        <input class="artist__input visually-hidden" type="radio" name="answer" value="${item}" id="answer-${item}">
         <label class="artist__name" for="answer-${item}">
-          <img class="artist__picture" src="${answer.image}" alt="${answer.artist}">
-          ${answer.artist}
+          <img class="artist__picture" src="${answer.image.url}" alt="${answer.title}" ${(DEBUG && answer.isCorrect) ? DEBUG_STYLE : ``}">
+          ${answer.title}
         </label>
       </div>`).join(``)}
     </form>`;

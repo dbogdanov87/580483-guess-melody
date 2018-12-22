@@ -1,8 +1,6 @@
 import {changeLevel, changeTime, changeAttempts, changeScore} from '../game-control.js';
-import {INITIAL_GAME, gameQuestions} from '../game-data.js';
+import {INITIAL_GAME} from '../game-data.js';
 import {scoring} from '../game-scoring.js';
-
-const getLevel = (state) => gameQuestions[state.level];
 
 export default class GameModel {
   constructor(data) {
@@ -15,8 +13,8 @@ export default class GameModel {
     return Object.freeze(this._state);
   }
 
-  get currentLevel() {
-    return getLevel(this._state);
+  get currentDataQuestion() {
+    return this.data[this._state.level];
   }
 
   nextLevel() {
@@ -27,12 +25,14 @@ export default class GameModel {
     this._state = changeAttempts(this._state, this._state.attempts - 1);
   }
 
-  getGameAnswerGenre() {
-    return gameQuestions[this._state.level].melody.map((item) => item.src).join(`,`);
-  }
-
-  getGameAnswerArtist() {
-    return gameQuestions[this._state.level].melody.image;
+  getIdCorrectAnswers() {
+    const correctSrcAnswers = [];
+    this.currentDataQuestion.answers.forEach((answer, item) => {
+      if (answer.isCorrect) {
+        correctSrcAnswers.push(item);
+      }
+    });
+    return correctSrcAnswers.join(`,`);
   }
 
   restart() {
@@ -48,7 +48,7 @@ export default class GameModel {
   }
 
   isGameGenre() {
-    return this.currentLevel.type === `game--genre`;
+    return this.currentDataQuestion.type === `genre`;
   }
 
   updateScore(userAnswers) {
