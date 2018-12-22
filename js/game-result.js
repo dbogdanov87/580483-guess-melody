@@ -21,10 +21,12 @@ export const getDefeatMessage = (results) => {
 const getVictoryMessage = (playersResult, score) => {
   const messages = {};
   const scoreResults = playersResult.map((it) => it.score);
+  const results = scoreResults.slice();
+  results.push(score);
 
-  scoreResults.sort((a, b) => a - b);
-  const place = scoreResults.indexOf(score) + 1;
-  const allPlaces = scoreResults.length;
+  results.sort((a, b) => a - b);
+  const place = results.indexOf(score) + 1;
+  const allPlaces = results.length;
   const successRate = Math.round((allPlaces - place) / allPlaces * 100);
 
   messages.title = `Вы настоящий меломан!`;

@@ -17,7 +17,7 @@ export default class Application {
     changeScreen(splash.element);
     splash.start();
     Loader.loadData()
-      .then((data) => gameData = data)
+      .then((data) => (gameData = data))
       .then(() => Application.showWelcome())
       .catch(Application.showError)
       .then(() => splash.stop());

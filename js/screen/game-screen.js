@@ -142,15 +142,17 @@ export default class GameScreen {
     this.viewGameQuestion.onAnswer = (element) => {
       this.stopTimer();
       this.compareAnswers(element);
+
       if (this.model.state.attempts === 0) {
         this.stopTimer();
         Application.showResult(this.model.state);
+      } else {
+        this.model.nextLevel();
+        const gameScreen = new GameScreen(this.model);
+        changeScreen(gameScreen.element);
+        gameScreen.startGame();
+        this.audioDelete();
       }
-      this.model.nextLevel();
-      const gameScreen = new GameScreen(this.model);
-      changeScreen(gameScreen.element);
-      gameScreen.startGame();
-      this.audioDelete();
     };
 
     this.viewGameQuestion.onCheckbox = () => {
@@ -164,8 +166,7 @@ export default class GameScreen {
 
     this.viewModalConfirm.onConfirm = () => {
       this.viewModalConfirm.element.remove();
-      this.stopTimer();
-      Application.showWelcome();
+      Application.start();
     };
   }
 }

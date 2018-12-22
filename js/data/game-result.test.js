@@ -10,18 +10,12 @@ const testCase1 = {
 };
 
 const testCase2 = {
-  score: 7,
-  attempts: 3,
-  time: 80
-};
-
-const testCase3 = {
   score: 6,
   attempts: 0,
   time: 100
 };
 
-const testCase4 = {
+const testCase3 = {
   score: 6,
   attempts: 1,
   time: 0
@@ -33,15 +27,11 @@ describe(`Проверка вывода результатов игры`, () => 
     assert.equal(`Вы заняли 1 место из 6 игроков. Это лучше, чем у 83% игроков`, getGameResult(statistics, testCase1).text);
   });
 
-  it(`Победил в игре и занял 4 место`, () => {
-    assert.equal(`Вы заняли 4 место из 6 игроков. Это лучше, чем у 33% игроков`, getGameResult(statistics, testCase2).text);
-  });
-
   it(`Проиграл в игре - закончились попытки`, () => {
-    assert.equal(getDefeatMessage(testCase3).text, getGameResult(statistics, testCase3).text);
+    assert.equal(getDefeatMessage(testCase2).text, getGameResult(statistics, testCase2).text);
   });
 
   it(`Проиграл в игре - закончилось время`, () => {
-    assert.equal(getDefeatMessage(testCase4).text, getGameResult(statistics, testCase4).text);
+    assert.equal(getDefeatMessage(testCase3).text, getGameResult(statistics, testCase3).text);
   });
 });
