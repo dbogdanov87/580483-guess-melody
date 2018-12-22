@@ -16,6 +16,7 @@ export default class GameScreen {
     this.viewGameType.element.querySelector(`.game__screen`).insertAdjacentElement(`beforeend`, this.viewGameQuestion.element);
 
     this._timer = 0;
+    this.bind();
   }
 
   get element() {
@@ -30,12 +31,15 @@ export default class GameScreen {
     this.model.tick();
     this.updateHeader();
     this._timer = setTimeout(() => this._tick(), 1000);
-    this.timeIsOver();
   }
 
   startGame() {
     this._tick();
-    this.changeLevel();
+    if (this.model.state.level === this.model.state.maxLevel) {
+      this.stopTimer();
+      this.model.updateScore(this.model.state.userAnswers);
+      Application.showResult(this.model.state);
+    }
   }
 
   updateHeader() {
@@ -45,23 +49,6 @@ export default class GameScreen {
     this.restart();
   }
 
-  changeLevel() {
-    this.viewGameQuestion.onAnswer = () => {
-      this.compareAnswers();
-      if (this.model.state.level === this.model.state.maxLevel) {
-        this.stopTimer();
-        this.model.updateScore(this.model.state.userAnswers);
-        Application.showResult(this.model.state);
-      } else {
-        this.model.nextLevel();
-        const gameScreen = new GameScreen(this.model);
-        this.stopTimer();
-        gameScreen.startGame();
-        changeScreen(gameScreen.element);
-      }
-    };
-  }
-
   timeIsOver() {
     if (this.model.state.time === 0) {
       Application.showResult(this.model.state);
@@ -69,8 +56,8 @@ export default class GameScreen {
     }
   }
 
-  getUserAnswerArtist() {
-    return this.viewGameQuestion.element.querySelector(`img`).src;
+  getUserAnswerArtist(element) {
+    return element.querySelector(`img`).src;
   }
 
 
@@ -89,13 +76,16 @@ export default class GameScreen {
     return this.model.isGameGenre() ? this.model.getGameAnswerGenre() : this.model.getGameAnswerArtist();
   }
 
-  getUserAnswer() {
-    return this.model.isGameGenre() ? this.getUserAnswersGenre() : this.getUserAnswerArtist();
+  getUserAnswer(element) {
+    return this.model.isGameGenre() ? this.getUserAnswersGenre() : this.getUserAnswerArtist(element);
   }
 
-  compareAnswers() {
-    const userAnswer = this.getUserAnswer();
+  compareAnswers(element) {
+    const userAnswer = this.getUserAnswer(element);
     const gameAnswer = this.getGameAnswer();
+    console.log(userAnswer,  `userAnswer`);
+    console.log(gameAnswer, `gameAnswer`);
+
     const answerUser = userAnswer === gameAnswer;
     this.model.updateUserAnswers(answerUser, this.model.state.time);
     if (!answerUser) {
@@ -110,5 +100,16 @@ export default class GameScreen {
   restart() {
     this.viewGameHeader.gameBackLink = () => Application.showWelcome();
     this.stopTimer();
+  }
+
+  bind() {
+    this.viewGameQuestion.onAnswer = (element) => {
+      this.stopTimer();
+      this.compareAnswers(element);
+      const gameScreen = new GameScreen(this.model);
+      changeScreen(gameScreen.element);
+      this.model.nextLevel();
+      gameScreen.startGame();
+    };
   }
 }

@@ -5,7 +5,8 @@ import {scoring} from '../game-scoring.js';
 const getLevel = (state) => gameQuestions[state.level];
 
 export default class GameModel {
-  constructor() {
+  constructor(data) {
+    this.data = data;
     this.restart();
 
   }
