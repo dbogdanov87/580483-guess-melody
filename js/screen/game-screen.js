@@ -6,6 +6,8 @@ import GenreView from '../view/genre-view.js';
 import Application from '../application.js';
 import ModalConfirmView from '../view/modal-confirm-view.js';
 
+const ONE_SECOND = 1000;
+
 export default class GameScreen {
   constructor(model) {
     this.model = model;
@@ -32,12 +34,13 @@ export default class GameScreen {
   _tick() {
     this.model.tick();
     this.updateHeader();
-    this._timer = setTimeout(() => this._tick(), 1000);
+    this._timer = setTimeout(() => this._tick(), ONE_SECOND);
     this.timeIsOver();
   }
 
   startGame() {
     this._tick();
+    this.playFirstTrack();
     if (this.model.state.level === this.model.state.maxLevel) {
       this.stopTimer();
       this.model.updateScore(this.model.state.userAnswers);
@@ -86,7 +89,7 @@ export default class GameScreen {
     const answerUser = userAnswer === gameAnswer;
     this.model.updateUserAnswers(answerUser, this.model.state.time);
     if (!answerUser) {
-      this.model.lossAttempt();
+      this.model.loseAttempt();
     }
   }
 
@@ -97,9 +100,15 @@ export default class GameScreen {
     this.stopTimer();
   }
 
-  audioPleer(button, audio) {
+  playFirstTrack() {
+    this.audioSwitch(
+        this.viewGameQuestion.element.querySelector(`.track__button`),
+        this.viewGameQuestion.element.querySelector(`audio`));
+  }
+
+  audioPlayer(button, audio) {
     if (button.classList.contains(`track__button--play`)) {
-      audio.play();
+      audio.play().catch();
     } else {
       audio.pause();
     }
@@ -117,19 +126,32 @@ export default class GameScreen {
     delete this.button;
   }
 
+  trackPause() {
+    const playedTrack = this.viewGameQuestion.element.querySelector(`.track__button--pause`);
+    if (playedTrack) {
+      playedTrack.parentNode.querySelector(`audio`).pause();
+      playedTrack.classList.remove(`track__button--pause`);
+      playedTrack.classList.add(`track__button--play`);
+    }
+  }
+
   audioSwitch(button, audio) {
-    if (this.audio && this.audio === audio) {
-      this.audioPleer(this.button, this.audio);
+    if (!this.audio) {
+      this.trackPause();
+      this.audioAdd(button, audio);
+      this.audioPlayer(this.button, this.audio);
+      return;
+    }
+    if (this.audio === audio) {
+      this.audioPlayer(this.button, this.audio);
       this.audioDelete();
-    } else {
-      if (this.audio && this.audio !== audio) {
-        this.audioPleer(this.button, this.audio);
-        this.audioAdd(button, audio);
-        this.audioPleer(this.button, this.audio);
-      } else {
-        this.audioAdd(button, audio);
-        this.audioPleer(this.button, this.audio);
-      }
+      return;
+    }
+
+    if (this.audio !== audio) {
+      this.audioPlayer(this.button, this.audio);
+      this.audioAdd(button, audio);
+      this.audioPlayer(this.button, this.audio);
     }
   }
 
@@ -143,11 +165,11 @@ export default class GameScreen {
       this.stopTimer();
       this.compareAnswers(element);
 
-      if (this.model.state.attempts === 0) {
+      if (this.model.state.attempts === this.model.state.maxAttempts) {
         this.stopTimer();
         Application.showResult(this.model.state);
       } else {
-        this.model.nextLevel();
+        this.model.switchToNextLevel();
         const gameScreen = new GameScreen(this.model);
         changeScreen(gameScreen.element);
         gameScreen.startGame();

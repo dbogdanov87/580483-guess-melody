@@ -17,12 +17,12 @@ export default class GameModel {
     return this.data[this._state.level];
   }
 
-  nextLevel() {
+  switchToNextLevel() {
     this._state = changeLevel(this._state, this._state.level + 1);
   }
 
-  lossAttempt() {
-    this._state = changeAttempts(this._state, this._state.attempts - 1);
+  loseAttempt() {
+    this._state = changeAttempts(this._state, this._state.attempts + 1);
   }
 
   getIdCorrectAnswers() {

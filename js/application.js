@@ -39,7 +39,7 @@ export default class Application {
   static showResult(result) {
     this.result = result;
 
-    if (this.result.score > 0 || this.result.attempts > 0) {
+    if (this.result.score > 0 || this.result.attempts < this.result.maxAttempts) {
       Loader.saveResults(this.result)
         .then(() => Loader.loadResults())
         .then((data) => (statisticsAllPlayers = data))
