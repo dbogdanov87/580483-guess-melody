@@ -108,7 +108,7 @@ export default class GameScreen {
 
   audioPlayer(button, audio) {
     if (button.classList.contains(`track__button--play`)) {
-      audio.play();
+      audio.play().catch();
     } else {
       audio.pause();
     }
@@ -126,23 +126,20 @@ export default class GameScreen {
     delete this.button;
   }
 
-  tryTrackPause() {
-    try {
-      const playedTrack = this.viewGameQuestion.element.querySelector(`.track__button--pause`);
+  trackPause() {
+    const playedTrack = this.viewGameQuestion.element.querySelector(`.track__button--pause`);
+    if (playedTrack) {
       playedTrack.parentNode.querySelector(`audio`).pause();
       playedTrack.classList.remove(`track__button--pause`);
       playedTrack.classList.add(`track__button--play`);
-    } catch (error) {
-      //
     }
-
   }
 
   audioSwitch(button, audio) {
     if (!this.audio) {
+      this.trackPause();
       this.audioAdd(button, audio);
       this.audioPlayer(this.button, this.audio);
-      this.tryTrackPause();
       return;
     }
     if (this.audio === audio) {
