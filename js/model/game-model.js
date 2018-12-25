@@ -22,7 +22,7 @@ export default class GameModel {
   }
 
   loseAttempt() {
-    this._state = changeAttempts(this._state, this._state.attempts - 1);
+    this._state = changeAttempts(this._state, this._state.attempts + 1);
   }
 
   getIdCorrectAnswers() {

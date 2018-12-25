@@ -101,8 +101,9 @@ export default class GameScreen {
   }
 
   playFirstTrack() {
-    this.viewGameQuestion.element.querySelector(`audio`).setAttribute(`autoplay`, true);
+    this.viewGameQuestion.element.querySelector(`audio`).play();
     this.viewGameQuestion.element.querySelector(`.track__button`).classList.add(`track__button--pause`);
+    this.viewGameQuestion.element.querySelector(`.track__button`).classList.remove(`track__button--play`);
   }
 
   audioPlayer(button, audio) {
@@ -125,19 +126,35 @@ export default class GameScreen {
     delete this.button;
   }
 
+  tryTrackPause() {
+    try {
+      const playedTrack = this.viewGameQuestion.element.querySelector(`.track__button--pause`);
+      playedTrack.parentNode.querySelector(`audio`).pause();
+      playedTrack.classList.remove(`track__button--pause`);
+      playedTrack.classList.add(`track__button--play`);
+    } catch (error) {
+      //
+    }
+
+  }
+
   audioSwitch(button, audio) {
-    if (this.audio && this.audio === audio) {
+    if (!this.audio) {
+      this.audioAdd(button, audio);
+      this.audioPlayer(this.button, this.audio);
+      this.tryTrackPause();
+      return;
+    }
+    if (this.audio === audio) {
       this.audioPlayer(this.button, this.audio);
       this.audioDelete();
-    } else {
-      if (this.audio && this.audio !== audio) {
-        this.audioPlayer(this.button, this.audio);
-        this.audioAdd(button, audio);
-        this.audioPlayer(this.button, this.audio);
-      } else {
-        this.audioAdd(button, audio);
-        this.audioPlayer(this.button, this.audio);
-      }
+      return;
+    }
+
+    if (this.audio !== audio) {
+      this.audioPlayer(this.button, this.audio);
+      this.audioAdd(button, audio);
+      this.audioPlayer(this.button, this.audio);
     }
   }
 
@@ -151,7 +168,7 @@ export default class GameScreen {
       this.stopTimer();
       this.compareAnswers(element);
 
-      if (this.model.state.attempts === 0) {
+      if (this.model.state.attempts === this.model.state.maxAttempts) {
         this.stopTimer();
         Application.showResult(this.model.state);
       } else {

@@ -11,7 +11,7 @@ export const getDefeatMessage = (results) => {
   if (results.time <= 0) {
     messages.title = defeatByTimeMessages.title;
     messages.text = defeatByTimeMessages.text;
-  } else if (results.attempts <= 0) {
+  } else if (results.attempts === results.maxAttempts) {
     messages.title = defeatByAttemptsMessages.title;
     messages.text = defeatByAttemptsMessages.text;
   }
@@ -44,5 +44,5 @@ export const getGameResult = (playersResult, currentResult) => {
     throw new Error(`Текущий результат должен быть объектом`);
   }
 
-  return (currentResult.time > 0 && currentResult.attempts > 0) ? getVictoryMessage(playersResult, currentResult.score) : getDefeatMessage(currentResult);
+  return (currentResult.time > 0 && currentResult.attempts < currentResult.maxAttempts) ? getVictoryMessage(playersResult, currentResult.score) : getDefeatMessage(currentResult);
 };
