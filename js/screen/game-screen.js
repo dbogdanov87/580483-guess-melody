@@ -101,9 +101,9 @@ export default class GameScreen {
   }
 
   playFirstTrack() {
-    this.viewGameQuestion.element.querySelector(`audio`).play();
-    this.viewGameQuestion.element.querySelector(`.track__button`).classList.add(`track__button--pause`);
-    this.viewGameQuestion.element.querySelector(`.track__button`).classList.remove(`track__button--play`);
+    this.audioSwitch(
+        this.viewGameQuestion.element.querySelector(`.track__button`),
+        this.viewGameQuestion.element.querySelector(`audio`));
   }
 
   audioPlayer(button, audio) {
