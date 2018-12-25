@@ -5,17 +5,10 @@ import GameScreen from '../js/screen/game-screen.js';
 import ResultScreen from '../js/screen/result-screen.js';
 import SplashScreen from './view/splash-view.js';
 import ErrorLoadingView from './view/error-view.js';
-import {adaptServerData} from './adaptive-data.js';
+import Loader from './loader.js';
 
-const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  } else {
-    throw new Error(`${response.status}: ${response.statusText}`);
-  }
-};
-
-let questData;
+let gameData;
+let statisticsAllPlayers = [];
 
 export default class Application {
 
@@ -23,16 +16,11 @@ export default class Application {
     const splash = new SplashScreen();
     changeScreen(splash.element);
     splash.start();
-    window.fetch(`https://es.dump.academy/guess-melody/questions`).
-      then(checkStatus).
-      then((response) => response.json()).
-      then((data) => this.data = adaptServerData(data)).
-      then((response) => Application.showWelcome()).
-      catch(Application.showError).
-
-      then(() => splash.stop());
-    console.log(questData);
-
+    Loader.loadData()
+      .then((data) => (gameData = data))
+      .then(() => Application.showWelcome())
+      .catch(Application.showError)
+      .then(() => splash.stop());
   }
 
   static showWelcome() {
@@ -40,17 +28,30 @@ export default class Application {
     changeScreen(welcomeScreen.element);
   }
 
-  static showGame(data) {
-    const model = new GameModel();
-    const gameScreen = new GameScreen(data, model);
+  static showGame() {
+    const model = new GameModel(gameData);
+    const gameScreen = new GameScreen(model);
     changeScreen(gameScreen.element);
     gameScreen.startGame();
 
   }
 
-  static showResult(stats) {
-    const resultScreen = new ResultScreen(stats);
-    changeScreen(resultScreen.element);
+  static showResult(result) {
+    this.result = result;
+
+    if (this.result.score > 0 || this.result.attempts < this.result.maxAttempts) {
+      Loader.saveResults(this.result)
+        .then(() => Loader.loadResults())
+        .then((data) => (statisticsAllPlayers = data))
+        .then(() => {
+          const resultScreen = new ResultScreen(statisticsAllPlayers, this.result);
+          changeScreen(resultScreen.element);
+        })
+        .catch(Application.showError);
+    } else {
+      const resultScreen = new ResultScreen(statisticsAllPlayers, result);
+      changeScreen(resultScreen.element);
+    }
   }
 
   static showError(error) {
